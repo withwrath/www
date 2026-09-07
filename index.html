@@ -407,15 +407,20 @@
   }
 
   .footer-wordmark {
-    margin: 40px 0 0;
-    font-size: clamp(72px, 15vw, 320px);
-    line-height: 0.82;
-    letter-spacing: -0.03em;
-    color: #fff;
-    white-space: nowrap;
-    font-weight: 700;
-    text-align: center;
-  }
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin: 40px 0 0;
+  transform: translateX(-50%);
+
+  font-size: clamp(72px, 15vw, 320px);
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  color: #fff;
+  white-space: nowrap;
+  font-weight: 700;
+  text-align: center;
+}
 
   @media (max-width: 760px) {
     .footer-top {
