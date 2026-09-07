@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wrath labs - privacy policy</title>
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --ink: #ececec;
+    --muted: #7a7a7a;
+    --rule: #262626;
+    --ember: #ff522c;
+    --amber: #ff522c;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  a:hover,
+  a:focus-visible {
+    border-bottom-color: var(--amber);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- policy content ---------- */
+
+  .policy-header {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .policy-header h1 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  section {
+    border-bottom: 1px solid var(--rule);
+    padding: 48px 0;
+  }
+
+  section:last-of-type {
+    border-bottom: none;
+  }
+
+  h2 {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0 0 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  p {
+    color: #d8d8d8;
+    font-size: 15px;
+    margin: 0 0 14px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  ul {
+    color: #d8d8d8;
+    font-size: 15px;
+    margin: 0 0 14px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+
+  strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ---------- footer ---------- */
+
+  .big-footer {
+    background: #000;
+    color: #fff;
+    border-top: 1px solid var(--rule);
+    padding: 72px 0 0;
+    overflow: hidden;
+    margin-top: 72px;
+  }
+
+  .big-footer .wrap {
+    max-width: 1200px;
+    padding: 0 28px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-col h4 {
+    margin: 0 0 20px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .footer-col a {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+  }
+
+  .footer-col a:hover,
+  .footer-col a:focus-visible {
+    border-bottom-color: rgba(255,255,255,0.55);
+  }
+
+  .footer-col a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .footer-brand {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.6);
+    max-width: 34ch;
+    line-height: 1.6;
+  }
+
+  .footer-meta {
+    margin-top: 64px;
+    padding: 22px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .footer-wordmark {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    margin: 40px 0 0;
+    transform: translateX(-50%);
+
+    font-size: clamp(72px, 15vw, 320px);
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+    color: #fff;
+    white-space: nowrap;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (max-width: 760px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .footer-wordmark {
+      font-size: clamp(15vw, 15vw, 15vw);
+      margin-top: 56px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="policy-header">
+    <h1>privacy policy</h1>
+  </div>
+
+  <section>
+    <h2>01 — information we collect</h2>
+    <p><strong>Information you provide</strong></p>
+    <p>When you join the wrath labs waitlist, we may collect:</p>
+    <ul>
+      <li>your email address;</li>
+      <li>information you voluntarily include in communications with us; and</li>
+      <li>other information you choose to provide.</li>
+    </ul>
+    <p>Please do not submit sensitive personal information through our website or waitlist.</p>
+    <p><strong>Information collected automatically</strong></p>
+    <p>When you visit our website, certain technical information may be collected automatically, such as:</p>
+    <ul>
+      <li>IP address;</li>
+      <li>browser and device type;</li>
+      <li>operating system;</li>
+      <li>pages or resources accessed;</li>
+      <li>referring website;</li>
+      <li>approximate location derived from technical information; and</li>
+      <li>date and time of access.</li>
+    </ul>
+    <p>We may use cookies or similar technologies where necessary for the operation, security, or functionality of the website.</p>
+  </section>
+
+  <section>
+    <h2>02 — how we use information</h2>
+    <p>We may use personal information to:</p>
+    <ul>
+      <li>operate and maintain our website;</li>
+      <li>manage our waitlist;</li>
+      <li>send updates about wrath labs, our models, products, and services;</li>
+      <li>respond to inquiries;</li>
+      <li>understand website usage and improve our website;</li>
+      <li>maintain security and prevent abuse; and</li>
+      <li>comply with applicable legal obligations.</li>
+    </ul>
+    <p>We do not use your email address to send unrelated third-party marketing.</p>
+  </section>
+
+  <section>
+    <h2>03 — waitlist communications</h2>
+    <p>If you provide your email address through our waitlist, we may use it to contact you about hosted inference access, product availability, research updates, or other wrath labs developments.</p>
+    <p>You may unsubscribe from non-essential communications at any time by following the unsubscribe instructions included in the communication or by contacting us.</p>
+  </section>
+
+  <section>
+    <h2>04 — sharing information</h2>
+    <p>We may share information with service providers that help us operate the website and our services, such as hosting, email delivery, analytics, security, and infrastructure providers.</p>
+    <p>These providers may process information only as necessary to provide services to us and subject to appropriate contractual or other protections.</p>
+    <p>We may also disclose information when reasonably necessary to:</p>
+    <ul>
+      <li>comply with applicable law, regulation, legal process, or governmental request;</li>
+      <li>protect the rights, property, or safety of wrath labs, our users, or others;</li>
+      <li>investigate fraud, security issues, or abuse; or</li>
+      <li>facilitate a merger, acquisition, financing, reorganization, sale of assets, or similar corporate transaction.</li>
+    </ul>
+    <p>We do not sell your personal information.</p>
+  </section>
+
+  <section>
+    <h2>05 — data retention</h2>
+    <p>We retain personal information for as long as reasonably necessary for the purposes described in this policy, including maintaining the waitlist and providing communications you have requested.</p>
+    <p>We may retain certain information for longer where required by law, necessary to resolve disputes, or needed to enforce our agreements.</p>
+  </section>
+
+  <section>
+    <h2>06 — international transfers</h2>
+    <p>Wrath Labs and our service providers may process information in countries other than the country in which you live.</p>
+    <p>Where required by applicable law, we use appropriate safeguards for international transfers of personal information.</p>
+  </section>
+
+  <section>
+    <h2>07 — your rights</h2>
+    <p>Depending on where you live, you may have rights concerning your personal information, including the right to:</p>
+    <ul>
+      <li>request access to personal information we hold about you;</li>
+      <li>request correction of inaccurate information;</li>
+      <li>request deletion of your personal information;</li>
+      <li>request restriction of certain processing;</li>
+      <li>object to certain processing;</li>
+      <li>request portability of information you have provided; and</li>
+      <li>withdraw consent where processing is based on consent.</li>
+    </ul>
+    <p>You may also have the right to lodge a complaint with your local data protection authority.</p>
+    <p>To exercise an applicable privacy right, contact us using the information below. We may need to verify your request before completing it.</p>
+  </section>
+
+  <section>
+    <h2>08 — cookies</h2>
+    <p>Our website may use cookies and similar technologies.</p>
+    <p>Cookies may be used for purposes such as maintaining website functionality, understanding how the website is used, and protecting the website from abuse.</p>
+    <p>You can generally control cookies through your browser settings. Disabling certain cookies may affect website functionality.</p>
+  </section>
+
+  <section>
+    <h2>09 — third-party services</h2>
+    <p>Our website may contain links to third-party websites or services, including services such as GitHub and Hugging Face.</p>
+    <p>We are not responsible for the privacy practices of third-party websites. Their own privacy policies apply when you interact with those services.</p>
+  </section>
+
+  <section>
+    <h2>10 — security</h2>
+    <p>We use reasonable technical and organizational measures designed to protect personal information against unauthorized access, loss, misuse, alteration, or disclosure.</p>
+    <p>No internet transmission or storage system can be guaranteed to be completely secure.</p>
+  </section>
+
+  <section>
+    <h2>11 — children's privacy</h2>
+    <p>Our website is not directed toward children, and we do not knowingly collect personal information from children in violation of applicable law.</p>
+    <p>If you believe a child has provided us with personal information, please contact us so that we can take appropriate action.</p>
+  </section>
+
+  <section>
+    <h2>12 — changes to this policy</h2>
+    <p>We may update this Privacy Policy from time to time.</p>
+    <p>When we make changes, we will update the "Last updated" date at the top of this page. The updated policy will become effective when posted unless otherwise stated.</p>
+  </section>
+
+  <section>
+    <h2>13 — contact</h2>
+    <p>If you have questions about this Privacy Policy or want to exercise a privacy right, please contact wrath labs through the contact information provided on our website.</p>
+  </section>
+
+</div>
+
+<div class="big-footer">
+  <div class="wrap">
+
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        wrath labs<br>
+        Frontier models for cyber operations.
+      </div>
+
+      <div class="footer-col">
+        <h4>MODELS</h4>
+
+        <ul>
+          <li><a href="#">wrath:1b</a></li>
+          <li><a href="#">wrath:9b</a></li>
+          <li><a href="#">wrath:120b</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>CONNECT</h4>
+
+        <ul>
+          <li>
+            <a href="https://github.com/withwrath">
+              github
+            </a>
+          </li>
+
+          <li>
+            <a href="https://huggingface.co/withwrath">
+              huggingface
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-meta">
+      <span>© 2026. All rights reserved.</span>
+    </div>
+
+    <p class="footer-wordmark">withwrath</p>
+
+  </div>
+</div>
+
+</body>
+</html>
