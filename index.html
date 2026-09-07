@@ -1,11 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>withwrath.xyz - building models to dominate cyber</title>
+<title>wrath labs - we build frontier models that dominate cyber</title>
+
 <style>
-:root { --bg: #121212; --ink: #e8e8e8; --muted: #8a8a8a; --rule: #2a2a2a; --link: #8ab4ff; }
+  :root {
+    --bg: #0a0a0a;
+    --ink: #ececec;
+    --muted: #7a7a7a;
+    --rule: #262626;
+    --ember: #ff522c;
+    --amber: #ff522c;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Lenis handles smooth scrolling */
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--amber);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  a:hover,
+  a:focus-visible {
+    border-bottom-color: var(--amber);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .hero img {
+    position: absolute;
+    inset: -10% 0 -10%;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    filter: saturate(0.9) contrast(1.05);
+
+    /* Prevent layout/compositing glitches during parallax */
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+  }
+
+  .hero::before {
+    /* darken top and bottom so hero text stays readable over any part of the image */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(6,6,6,0.6) 0%,
+      rgba(6,6,6,0.05) 28%,
+      rgba(6,6,6,0.05) 50%,
+      rgba(6,6,6,0.9) 90%,
+      #0a0a0a 100%
+    );
+  }
+
+  .hero-top {
+    position: relative;
+    z-index: 2;
+    padding: 28px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: rgba(236,236,236,0.85);
+    text-shadow: 0 1px 12px rgba(0,0,0,0.7);
+  }
+
+  .hero-top .mark {
+    color: var(--ink);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 28px 64px;
+  }
+
+  .hero-content .line {
+    margin: 0;
+    font-size: clamp(28px, 4.8vw, 46px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    max-width: 14ch;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+  }
+
+  .hero-content .sub {
+    margin: 18px 0 0;
+    max-width: 46ch;
+    color: rgba(236,236,236,0.82);
+    font-size: 15px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.55);
+  }
+
+  .scroll-hint {
+    position: relative;
+    z-index: 2;
+    padding: 0 28px 22px;
+    font-size: 12px;
+    color: rgba(236,236,236,0.45);
+  }
+
+  /* ---------- sections ---------- */
+
+  section {
+    border-top: 1px solid var(--rule);
+    padding: 72px 0;
+  }
+
+  h2 {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    margin: 0 0 28px;
+  }
+
+  .stance p {
+    font-size: 19px;
+    max-width: 58ch;
+    margin: 0 0 18px;
+    color: #d8d8d8;
+  }
+
+  .stance p:last-child {
+    margin-bottom: 0;
+  }
+
+  .stance strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .row:first-child {
+    border-top: none;
+  }
+
+  .row .k {
+    color: var(--muted);
+    font-size: 13px;
+    padding-top: 2px;
+  }
+
+  .row .v {
+    color: var(--ink);
+    font-size: 15px;
+  }
+
+  .row .v span {
+    color: var(--muted);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 0 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  footer .links {
+    display: flex;
+    gap: 18px;
+  }
+
+  @media (max-width: 560px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    section {
+      padding: 52px 0;
+    }
+
+    .hero::before {
+      background: linear-gradient(
+        180deg,
+        rgba(6,6,6,0.72) 0%,
+        rgba(6,6,6,0.25) 30%,
+        rgba(6,6,6,0.35) 55%,
+        rgba(6,6,6,0.94) 88%,
+        #0a0a0a 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* ---------- cta ---------- */
+
+  .cta {
+    border-top: 1px solid var(--rule);
+    padding: 88px 0;
+    text-align: center;
+  }
+
+  .cta h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    max-width: 16ch;
+    margin: 0 auto 32px;
+    letter-spacing: -0.01em;
+  }
+
+  .cta form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .cta input {
+    flex: 1;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    padding: 4px 0;
+    text-align: left;
+  }
+
+  .cta input::placeholder {
+    color: var(--muted);
+  }
+
+  .cta input:focus {
+    outline: none;
+  }
+
+  .cta button {
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+
+  .cta button:focus-visible {
+    outline: 2px solid var(--ember);
+    outline-offset: 3px;
+  }
+
+  .cta .fine {
+    margin: 20px auto 0;
+    max-width: 42ch;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .cta .fine a {
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cta .fine a:hover {
+    color: var(--ink);
+    border-bottom-color: var(--muted);
+  }
+
+  /* ---------- footer ---------- */
+
+  .big-footer {
+    background: #000;
+    color: #fff;
+    border-top: 1px solid var(--rule);
+    padding: 72px 0 0;
+    overflow: hidden;
+  }
+
+  .big-footer .wrap {
+    max-width: 1200px;
+    padding: 0 28px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-col h4 {
+    margin: 0 0 20px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .footer-col a {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+  }
+
+  .footer-col a:hover,
+  .footer-col a:focus-visible {
+    border-bottom-color: rgba(255,255,255,0.55);
+  }
+
+  .footer-col a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .footer-brand {
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.6);
+    max-width: 34ch;
+    line-height: 1.6;
+  }
+
+  .footer-meta {
+    margin-top: 64px;
+    padding: 22px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .footer-wordmark {
+    margin: 40px 0 0;
+    font-size: clamp(72px, 15vw, 320px);
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+    color: #fff;
+    white-space: nowrap;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (max-width: 760px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .footer-wordmark {
+      font-size: clamp(15vw, 15vw, 15vw);
+      margin-top: 56px;
+    }
+  }
 </style>
-<body style="font-family: monospace; font-size: 20px; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin: 0; background-color: var(--bg); color: var(--ink);">
-<p>wrath labs</p>
-<p style="color: var(--muted); font-style: italic;">building models to dominate cyber</p>
-<div style="display: flex; gap: 16px; justify-content: center;"><a href="https://github.com/withwrath" style="color: var(--link);">gh</a> <a href="https://huggingface.co/withwrath" style="color: var(--link);">hf</a></div>
-<p>copyright ©️  2026 <a href="https://withwrath.xyz" style="color: var(--link);">wrath labs</a></p>
+</head>
+
+<body>
+
+<div class="hero">
+  <img
+    id="heroImg"
+    src="hero.png"
+    alt="A canyon opening onto a river at sunset, rendered as glitched ASCII text overlaying the photograph."
+  >
+
+  <div class="hero-top">
+    <span class="mark">wrath labs</span>
+    <span>est. 2026</span>
+  </div>
+
+  <div class="hero-content">
+    <p class="line">we build models that dominate cyber</p>
+
+    <p class="sub">
+      Frontier large language models trained end-to-end for offensive and defensive
+      cyber operations. No chat assistant. No consumer product. Just capability.
+    </p>
+  </div>
+
+  <div class="scroll-hint">scroll ↓</div>
+</div>
+
+<div class="wrap">
+
+  <section class="stance">
+    <h2>what we're doing</h2>
+
+    <p>
+      Most labs are building models to talk to people.
+      <strong>We're building models to act on networks</strong> —
+      to find the way in, understand what they've found, and decide what
+      to do next, without a human narrating every step.
+    </p>
+
+    <p>
+      Cyber operations are a narrow domain with a wide surface:
+      reconnaissance, exploit development, lateral movement, persistence,
+      cleanup. We think a model purpose-built for that domain, rather than
+      adapted to it, ends up somewhere general-purpose systems don't reach.
+    </p>
+  </section>
+
+  <section class="models" id="models">
+    <h2>the models</h2>
+
+    <div class="rows">
+
+      <div class="row">
+        <div class="k">wrath:1b</div>
+        <div class="v">
+          Edge deployments
+          <span>
+            — optional reasoning, agentic capabilities, tuned for fast latency
+            and high tok/s
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="k">wrath:9b</div>
+        <div class="v">
+          Vision-capable
+          <span>
+            — optional reasoning, agentic capabilities, medium latency,
+            more accurate responses
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="k">wrath:120b</div>
+        <div class="v">
+          Flagship, coming soon
+          <span>
+            — multimodal, optional reasoning, agentic capabilities,
+            MoE architecture
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="details">
+    <h2>the work</h2>
+
+    <div class="rows">
+
+      <div class="row">
+        <div class="k">focus</div>
+        <div class="v">
+          Offensive &amp; defensive tooling for autonomous cyber operations
+          <span>
+            — red team automation, exploit development, TTP coverage,
+            agentic red teaming with 0 refusals
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="k">stage</div>
+        <div class="v">
+          Pre-launch
+          <span>
+            — training and optimizing our models for maximum dominance
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="k">team</div>
+        <div class="v">
+          Small, technical, heads-down team with a proven track-record
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<section class="cta">
+  <div class="wrap">
+
+    <h3>join the waitlist for hosted inference access</h3>
+
+    <form onsubmit="return false;">
+      <input
+        type="email"
+        placeholder="Enter your email"
+        aria-label="Email address"
+      >
+
+      <button type="submit" aria-label="Join waitlist">
+        →
+      </button>
+    </form>
+
+    <p class="fine">
+      By entering your email, you agree to receive updates from wrath labs.
+      See our <a href="#">privacy policy</a>.
+    </p>
+
+  </div>
+</section>
+
+<div class="big-footer">
+  <div class="wrap">
+
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        wrath labs<br>
+        Frontier models for cyber operations.
+      </div>
+
+      <div class="footer-col">
+        <h4>MODELS</h4>
+
+        <ul>
+          <li><a href="#models">wrath:1b</a></li>
+          <li><a href="#models">wrath:9b</a></li>
+          <li><a href="#models">wrath:120b</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>CONNECT</h4>
+
+        <ul>
+          <li>
+            <a href="https://github.com/withwrath">
+              github
+            </a>
+          </li>
+
+          <li>
+            <a href="https://huggingface.co/withwrath">
+              huggingface
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-meta">
+      <span>© 2026. All rights reserved.</span>
+    </div>
+
+    <p class="footer-wordmark">withwrath</p>
+
+  </div>
+</div>
+
+
+<!-- =========================================================
+     LENIS
+     ========================================================= -->
+
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+<script>
+(function () {
+  const img = document.getElementById('heroImg');
+  const hero = document.querySelector('.hero');
+
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  /*
+   * Respect reduced-motion preferences.
+   * Don't initialize Lenis or parallax in this mode.
+   */
+  if (!img || !hero || reduceMotion) {
+    return;
+  }
+
+  /*
+   * Initialize Lenis.
+   *
+   * The important part here is that we DON'T also use:
+   *
+   *   html { scroll-behavior: smooth; }
+   *
+   * Native smooth scrolling and Lenis should not both control
+   * the same scroll operation.
+   */
+  const lenis = new Lenis({
+    smoothWheel: true,
+    syncTouch: false,
+    autoRaf: false
+  });
+
+  /*
+   * Hero parallax.
+   *
+   * Instead of listening to window's native "scroll" event,
+   * use Lenis's own scroll value.
+   */
+  lenis.on('scroll', function (event) {
+    const scroll = event.scroll;
+
+    const heroHeight = hero.offsetHeight;
+
+    /*
+     * Don't keep updating the image once the hero is completely
+     * above the viewport.
+     */
+    if (scroll <= heroHeight) {
+      const offset = scroll * 0.28;
+
+      img.style.transform =
+        'translate3d(0, ' + offset + 'px, 0)';
+    }
+  });
+
+  /*
+   * Single animation loop.
+   *
+   * Lenis gets exactly one RAF loop.
+   */
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+
+  requestAnimationFrame(raf);
+
+  /*
+   * Handle anchor links through Lenis.
+   *
+   * This keeps links such as #models smooth without relying
+   * on native CSS scroll-behavior.
+   */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      const targetId = link.getAttribute('href');
+
+      if (!targetId || targetId === '#') {
+        return;
+      }
+
+      const target = document.querySelector(targetId);
+
+      if (!target) {
+        return;
+      }
+
+      event.preventDefault();
+
+      lenis.scrollTo(target, {
+        offset: 0,
+        duration: 100.1
+      });
+    });
+  });
+})();
+</script>
+
 </body>
+</html>
