@@ -67,12 +67,11 @@
     overflow: hidden;
   }
 
-  .hero img {
+  .hero canvas {
     position: absolute;
     inset: -10% 0 -10%;
     width: 100%;
     height: 120%;
-    object-fit: cover;
     filter: saturate(0.9) contrast(1.05);
 
     /* Prevent layout/compositing glitches during parallax */
@@ -439,11 +438,7 @@
 <body>
 
 <div class="hero">
-  <img
-    id="heroImg"
-    src="hero.png"
-    alt="A canyon opening onto a river at sunset, rendered as glitched ASCII text overlaying the photograph."
-  >
+  <canvas id="heroCanvas"></canvas>
 
   <div class="hero-top">
     <span class="mark">wrath labs</span>
@@ -455,7 +450,7 @@
 
     <p class="sub">
       Frontier large language models trained end-to-end for offensive and defensive
-      cyber operations. No chat assistant. No consumer product. Just capability.
+      cyber operations. No hands holding. No restrictive controls. Just raw capability.
     </p>
   </div>
 
@@ -476,7 +471,7 @@
 
     <p>
       Cyber operations are a narrow domain with a wide surface:
-      reconnaissance, exploit development, lateral movement, persistence,
+      reconnaissance, exploit development, malware research, lateral movement, persistence,
       cleanup. We think a model purpose-built for that domain, rather than
       adapted to it, ends up somewhere general-purpose systems don't reach.
     </p>
@@ -637,6 +632,149 @@
 
 
 <!-- =========================================================
+     ASCII OVERLAY HERO
+     ========================================================= -->
+
+<script>
+const ASCII_CONFIG = {
+  cell: 9,
+  fontSize: 10,
+  darkCutoff: 28,
+  brightBoost: 1.6,
+  charRamp: "@#S08Xx+=-;:. ",
+  fps: 30,
+  charUpdateRate: 0.25,
+  vignetteStrength: 0.4,
+};
+
+const heroCanvas = document.getElementById('heroCanvas');
+const heroCtx = heroCanvas.getContext('2d');
+
+const heroImg = new Image();
+heroImg.crossOrigin = 'anonymous';
+heroImg.src = 'hero.png';
+
+let asciiSampleCanvas, asciiSampleCtx, asciiCols, asciiRows, asciiCellData, asciiFrameCount = 0;
+
+heroImg.onload = () => {
+  asciiResize();
+  window.addEventListener('resize', asciiResize);
+  requestAnimationFrame(asciiLoop);
+};
+
+function asciiResize() {
+  heroCanvas.width = window.innerWidth;
+  heroCanvas.height = window.innerHeight;
+
+  asciiCols = Math.ceil(heroCanvas.width / ASCII_CONFIG.cell);
+  asciiRows = Math.ceil(heroCanvas.height / ASCII_CONFIG.cell);
+
+  asciiSampleCanvas = document.createElement('canvas');
+  asciiSampleCanvas.width = asciiCols;
+  asciiSampleCanvas.height = asciiRows;
+  asciiSampleCtx = asciiSampleCanvas.getContext('2d', { willReadFrequently: true });
+
+  asciiBuildCellData();
+}
+
+function asciiDrawCover(context, w, h, offsetY) {
+  const ir = heroImg.width / heroImg.height;
+  const tr = w / h;
+  let sw, sh, sx, sy;
+  if (ir > tr) {
+    sh = heroImg.height;
+    sw = sh * tr;
+    sx = (heroImg.width - sw) / 2;
+    sy = 0;
+  } else {
+    sw = heroImg.width;
+    sh = sw / tr;
+    sx = 0;
+    sy = (heroImg.height - sh) / 2;
+  }
+  // Apply parallax offset to source
+  sy += offsetY;
+  context.drawImage(heroImg, sx, sy, sw, sh, 0, 0, w, h);
+}
+
+function asciiBuildCellData() {
+  asciiDrawCover(asciiSampleCtx, asciiCols, asciiRows, 0);
+  const { data } = asciiSampleCtx.getImageData(0, 0, asciiCols, asciiRows);
+  asciiCellData = data;
+}
+
+function asciiPickChar() {
+  const ramp = ASCII_CONFIG.charRamp;
+  return ramp[(Math.random() * ramp.length) | 0];
+}
+
+function asciiLoop() {
+  asciiFrameCount++;
+
+  // Base image layer
+  asciiDrawCover(heroCtx, heroCanvas.width, heroCanvas.height, 0);
+
+  // Overlay glyphs
+  heroCtx.font = `${ASCII_CONFIG.fontSize}px monospace`;
+  heroCtx.textBaseline = 'middle';
+  heroCtx.textAlign = 'center';
+
+  if (!asciiLoop.chars) {
+    asciiLoop.chars = new Array(asciiCols * asciiRows);
+  }
+
+  for (let y = 0; y < asciiRows; y++) {
+    for (let x = 0; x < asciiCols; x++) {
+      const i = (y * asciiCols + x) * 4;
+      const r = asciiCellData[i], g = asciiCellData[i + 1], b = asciiCellData[i + 2];
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+      if (lum < ASCII_CONFIG.darkCutoff) continue;
+
+      const idx = y * asciiCols + x;
+      if (Math.random() < ASCII_CONFIG.charUpdateRate || !asciiLoop.chars[idx]) {
+        asciiLoop.chars[idx] = asciiPickChar();
+      }
+
+      const cr = Math.min(255, r * ASCII_CONFIG.brightBoost);
+      const cg = Math.min(255, g * ASCII_CONFIG.brightBoost);
+      const cb = Math.min(255, b * ASCII_CONFIG.brightBoost);
+      const alpha = Math.min(1, lum / 255) * 0.9 + 0.1;
+
+      heroCtx.fillStyle = `rgba(${cr | 0},${cg | 0},${cb | 0},${alpha})`;
+      heroCtx.fillText(
+        asciiLoop.chars[idx],
+        x * ASCII_CONFIG.cell + ASCII_CONFIG.cell / 2,
+        y * ASCII_CONFIG.cell + ASCII_CONFIG.cell / 2
+      );
+    }
+  }
+
+  asciiApplyVignette();
+
+  const delay = (1000 / ASCII_CONFIG.fps) * (0.8 + Math.random() * 0.4);
+  setTimeout(() => requestAnimationFrame(asciiLoop), delay);
+}
+
+function asciiApplyVignette() {
+  if (!ASCII_CONFIG.vignetteStrength) return;
+  const strength = ASCII_CONFIG.vignetteStrength;
+
+  const cx = heroCanvas.width / 2;
+  const cy = heroCanvas.height / 2;
+  const radius = Math.max(heroCanvas.width, heroCanvas.height) * 0.7;
+
+  const gradient = heroCtx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  gradient.addColorStop(0, 'rgba(0,0,0,0)');
+  gradient.addColorStop(0.5, 'rgba(0,0,0,0)');
+  gradient.addColorStop(1, `rgba(0,0,0,${strength})`);
+
+  heroCtx.fillStyle = gradient;
+  heroCtx.fillRect(0, 0, heroCanvas.width, heroCanvas.height);
+}
+</script>
+
+<!-- =========================================================
      LENIS
      ========================================================= -->
 
@@ -644,7 +782,7 @@
 
 <script>
 (function () {
-  const img = document.getElementById('heroImg');
+  const canvas = document.getElementById('heroCanvas');
   const hero = document.querySelector('.hero');
 
   const reduceMotion = window.matchMedia(
@@ -655,7 +793,7 @@
    * Respect reduced-motion preferences.
    * Don't initialize Lenis or parallax in this mode.
    */
-  if (!img || !hero || reduceMotion) {
+  if (!canvas || !hero || reduceMotion) {
     return;
   }
 
@@ -693,7 +831,7 @@
     if (scroll <= heroHeight) {
       const offset = scroll * 0.28;
 
-      img.style.transform =
+      canvas.style.transform =
         'translate3d(0, ' + offset + 'px, 0)';
     }
   });
