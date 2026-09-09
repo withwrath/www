@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,26 +74,25 @@
     width: 100%;
     height: 120%;
     filter: saturate(0.9) contrast(1.05);
-
-    /* Prevent layout/compositing glitches during parallax */
+    /* Parallax: the canvas is translated on the compositor (see the
+       Lenis scroll handler). Body content scrolls at 1x, the canvas
+       drifts at 0.28x, so the hero appears to stay behind. */
     will-change: transform;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
   }
 
   .hero::before {
-    /* darken top and bottom so hero text stays readable over any part of the image */
+    /* Darkening is mobile-only (see the max-width:560px block below).
+       Desktop leaves the image as-is — the fix that made this
+       pseudo-element paint above the canvas (z-index:1) also meant
+       this base gradient, previously an invisible no-op, would have
+       started darkening desktop too if left as-is. */
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(6,6,6,0.6) 0%,
-      rgba(6,6,6,0.05) 28%,
-      rgba(6,6,6,0.05) 50%,
-      rgba(6,6,6,0.9) 90%,
-      #0a0a0a 100%
-    );
+    z-index: 1;
+    background: none;
   }
 
   .hero-top {
@@ -233,15 +233,39 @@
       padding: 52px 0;
     }
 
+    /* Text contrast on mobile is handled by the dedicated scrim
+       below, not by trying to darken the whole image (which can't
+       guarantee contrast wherever the text lands over the photo). */
     .hero::before {
       background: linear-gradient(
         180deg,
-        rgba(6,6,6,0.72) 0%,
-        rgba(6,6,6,0.25) 30%,
-        rgba(6,6,6,0.35) 55%,
-        rgba(6,6,6,0.94) 88%,
+        rgba(6,6,6,0.5) 0%,
+        rgba(6,6,6,0.05) 20%,
+        rgba(6,6,6,0.05) 55%,
+        rgba(6,6,6,0.92) 90%,
         #0a0a0a 100%
       );
+    }
+
+    /* Dedicated dark backdrop behind the hero text block, mobile only.
+       Desktop has more breathing room and the text reliably clears
+       the bright horizon band, so this is skipped there. */
+    .hero-content {
+      position: relative;
+    }
+
+    .hero-content::before {
+      content: "";
+      position: absolute;
+      inset: -16px -20px -16px -20px;
+      background: linear-gradient(
+        180deg,
+        rgba(6,6,6,0) 0%,
+        rgba(6,6,6,0.55) 18%,
+        rgba(6,6,6,0.82) 100%
+      );
+      border-radius: 4px;
+      z-index: -1;
     }
   }
 
@@ -656,15 +680,33 @@ heroImg.src = 'hero.png';
 
 let asciiSampleCanvas, asciiSampleCtx, asciiCols, asciiRows, asciiCellData, asciiFrameCount = 0;
 
+
 heroImg.onload = () => {
   asciiResize();
   window.addEventListener('resize', asciiResize);
+
+  // The hero's height depends on text wrapping (min-height, not a
+  // fixed height), so a plain window resize listener isn't enough —
+  // watch the container itself in case its height changes without
+  // the viewport changing (e.g. font load, dynamic content).
+  if (window.ResizeObserver) {
+    new ResizeObserver(asciiResize).observe(heroCanvas.parentElement);
+  }
+
   requestAnimationFrame(asciiLoop);
 };
 
 function asciiResize() {
-  heroCanvas.width = window.innerWidth;
-  heroCanvas.height = window.innerHeight;
+  // Size the canvas to the hero container's actual rendered box,
+  // not window.innerWidth/innerHeight. The hero's height can exceed
+  // one viewport once text wraps on narrow screens (it's min-height,
+  // not a fixed height); sizing off the window left the canvas CSS
+  // box (100% width / 120% height of the *container*) mismatched
+  // with the bitmap's actual drawn pixels, stretching the image and
+  // exposing a light gap right where the container grew past 100vh.
+  const rect = heroCanvas.parentElement.getBoundingClientRect();
+  heroCanvas.width = Math.ceil(rect.width);
+  heroCanvas.height = Math.ceil(rect.height);
 
   asciiCols = Math.ceil(heroCanvas.width / ASCII_CONFIG.cell);
   asciiRows = Math.ceil(heroCanvas.height / ASCII_CONFIG.cell);
@@ -692,12 +734,16 @@ function asciiDrawCover(context, w, h, offsetY) {
     sx = 0;
     sy = (heroImg.height - sh) / 2;
   }
+
   // Apply parallax offset to source
   sy += offsetY;
   context.drawImage(heroImg, sx, sy, sw, sh, 0, 0, w, h);
 }
 
-function asciiBuildCellData() {
+function asciiBuildCellData(offsetY) {
+  // Sample at the same scroll offset the base image is drawn with,
+  // so the glyphs' brightness/color track the moving image instead
+  // of staying frozen to whatever was on screen at load/resize.
   asciiDrawCover(asciiSampleCtx, asciiCols, asciiRows, 0);
   const { data } = asciiSampleCtx.getImageData(0, 0, asciiCols, asciiRows);
   asciiCellData = data;
@@ -711,7 +757,9 @@ function asciiPickChar() {
 function asciiLoop() {
   asciiFrameCount++;
 
-  // Base image layer
+  // Base image layer. The image is always drawn at a fixed crop; the
+  // parallax is a CSS transform on the whole canvas (image + ascii
+  // move together as one layer), applied in the Lenis handler below.
   asciiDrawCover(heroCtx, heroCanvas.width, heroCanvas.height, 0);
 
   // Overlay glyphs
@@ -752,8 +800,15 @@ function asciiLoop() {
 
   asciiApplyVignette();
 
-  const delay = (1000 / ASCII_CONFIG.fps) * (0.8 + Math.random() * 0.4);
-  setTimeout(() => requestAnimationFrame(asciiLoop), delay);
+  // NOTE: previously this used setTimeout with a randomized delay
+  // (0.8–1.2x the frame interval) to throttle toward ~30fps. That
+  // jitter meant the canvas redraw cadence was never in sync with
+  // the display refresh rate or with Lenis's own rAF loop, which
+  // was a major source of visible stutter/flicker. Plain rAF here
+  // keeps everything on one consistent clock; glyph randomization
+  // (charUpdateRate) already gives the "flickery ascii" look without
+  // needing an unstable frame timer.
+  requestAnimationFrame(asciiLoop);
 }
 
 function asciiApplyVignette() {
@@ -817,22 +872,29 @@ function asciiApplyVignette() {
    * Hero parallax.
    *
    * Instead of listening to window's native "scroll" event,
-   * use Lenis's own scroll value.
+   * use Lenis's own scroll value. Instead of writing a CSS
+   * transform straight onto the canvas here (which used to run
+   * on a separate timing from the ascii redraw loop and caused
+   * flicker), we just update a shared variable. The ascii draw
+   * loop (in the script above) reads it every frame and bakes
+   * the offset into the actual canvas draw call, so scroll
+   * position and pixel content are always updated together,
+   * in the same frame.
+   */
+  /*
+   * Hero parallax. Uses Lenis's own scroll value rather than the
+   * native 'scroll' event. This only writes a shared variable —
+   * the actual canvas redraw (and application of this offset)
+   * happens once per frame in the ascii draw loop above, so the
+   * two stay in lockstep instead of fighting over separate timings.
    */
   lenis.on('scroll', function (event) {
     const scroll = event.scroll;
-
     const heroHeight = hero.offsetHeight;
 
-    /*
-     * Don't keep updating the image once the hero is completely
-     * above the viewport.
-     */
     if (scroll <= heroHeight) {
       const offset = scroll * 0.28;
-
-      canvas.style.transform =
-        'translate3d(0, ' + offset + 'px, 0)';
+      canvas.style.transform = 'translate3d(0, ' + offset + 'px, 0)';
     }
   });
 
@@ -872,7 +934,7 @@ function asciiApplyVignette() {
 
       lenis.scrollTo(target, {
         offset: 0,
-        duration: 100.1
+        duration: 1.2
       });
     });
   });
